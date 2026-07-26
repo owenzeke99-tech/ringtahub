@@ -1,0 +1,290 @@
+--[[
+	WARNING: Script Key System - Ultra Smooth Error Animations & 24H Auto-Save Key
+]]
+
+local CorrectKey = "RingTaScripsForsakenHubRobloxHack"
+local KeyURL = "https://link4m.net/wpcF0"
+local SaveFileName = "RingTaHub_SavedKey.json" -- File lưu key trong bộ nhớ Executor
+
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+-- Hàm thực thi Script chính
+local function loadMainScript()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/34f3f/forsaken.github.io/refs/heads/main/ringtabublik.lua"))()
+end
+
+-- ==========================================
+-- HỆ THỐNG KIỂM TRA & LƯU KEY (24 GIỜ)
+-- ==========================================
+local function saveKeyData(key)
+	if writefile then
+		local data = {
+			Key = key,
+			ExpireTimestamp = os.time() + (24 * 3600) -- Hết hạn sau 24 giờ (86400 giây)
+		}
+		writefile(SaveFileName, HttpService:JSONEncode(data))
+	end
+end
+
+local function checkSavedKey()
+	if readfile and isfile and isfile(SaveFileName) then
+		local success, result = pcall(function()
+			return HttpService:JSONDecode(readfile(SaveFileName))
+		end)
+		
+		if success and result and result.Key and result.ExpireTimestamp then
+			-- Kiểm tra xem key có đúng và còn thời hạn hay không
+			if result.Key == CorrectKey and os.time() < result.ExpireTimestamp then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+-- Nếu đã lưu key và chưa hết hạn 24h, load script ngay lập tức!
+if checkSavedKey() then
+	loadMainScript()
+	return
+end
+
+-- ==========================================
+-- GIAO DIỆN KEY SYSTEM (Nếu chưa lưu key)
+-- ==========================================
+
+-- Remove existing UI if present
+if CoreGui:FindFirstChild("RingTaModernKeyUI") then
+	CoreGui.RingTaModernKeyUI:Destroy()
+end
+
+-- Create Main ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RingTaModernKeyUI"
+ScreenGui.Parent = CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.Size = UDim2.new(0, 360, 0, 220)
+MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
+MainFrame.BackgroundTransparency = 0.15
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 16)
+MainCorner.Parent = MainFrame
+
+-- Glowing Border
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Parent = MainFrame
+MainStroke.Color = Color3.fromRGB(100, 110, 245)
+MainStroke.Thickness = 1.2
+MainStroke.Transparency = 0.4
+
+-- Title & Subtitle
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 20, 0, 18)
+Title.Size = UDim2.new(1, -40, 0, 24)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "RING TA HUB"
+Title.TextColor3 = Color3.fromRGB(240, 240, 255)
+Title.TextSize = 18
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local SubTitle = Instance.new("TextLabel")
+SubTitle.Name = "SubTitle"
+SubTitle.Parent = MainFrame
+SubTitle.BackgroundTransparency = 1
+SubTitle.Position = UDim2.new(0, 20, 0, 42)
+SubTitle.Size = UDim2.new(1, -40, 0, 16)
+SubTitle.Font = Enum.Font.Gotham
+SubTitle.Text = "Enter system key to continue"
+SubTitle.TextColor3 = Color3.fromRGB(140, 140, 160)
+SubTitle.TextSize = 12
+SubTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Input Container
+local InputFrame = Instance.new("Frame")
+InputFrame.Name = "InputFrame"
+InputFrame.Parent = MainFrame
+InputFrame.Position = UDim2.new(0, 20, 0, 72)
+InputFrame.Size = UDim2.new(1, -40, 0, 42)
+InputFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+InputFrame.BorderSizePixel = 0
+
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 10)
+InputCorner.Parent = InputFrame
+
+local InputStroke = Instance.new("UIStroke")
+InputStroke.Parent = InputFrame
+InputStroke.Color = Color3.fromRGB(60, 60, 80)
+InputStroke.Thickness = 1
+
+local KeyInput = Instance.new("TextBox")
+KeyInput.Name = "KeyInput"
+KeyInput.Parent = InputFrame
+KeyInput.BackgroundTransparency = 1
+KeyInput.Position = UDim2.new(0, 12, 0, 0)
+KeyInput.Size = UDim2.new(1, -24, 1, 0)
+KeyInput.Font = Enum.Font.GothamMedium
+KeyInput.PlaceholderText = "Paste key here..."
+KeyInput.PlaceholderColor3 = Color3.fromRGB(100, 100, 120)
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.TextSize = 13
+KeyInput.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Get Key Button
+local GetKeyBtn = Instance.new("TextButton")
+GetKeyBtn.Name = "GetKeyBtn"
+GetKeyBtn.Parent = MainFrame
+GetKeyBtn.Position = UDim2.new(0, 20, 0, 126)
+GetKeyBtn.Size = UDim2.new(0.35, 0, 0, 38)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(32, 32, 45)
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.Text = "GET KEY"
+GetKeyBtn.TextColor3 = Color3.fromRGB(160, 170, 255)
+GetKeyBtn.TextSize = 12
+GetKeyBtn.AutoButtonColor = false
+
+local GetKeyCorner = Instance.new("UICorner")
+GetKeyCorner.CornerRadius = UDim.new(0, 10)
+GetKeyCorner.Parent = GetKeyBtn
+
+-- Submit Button
+local SubmitBtn = Instance.new("TextButton")
+SubmitBtn.Name = "SubmitBtn"
+SubmitBtn.Parent = MainFrame
+SubmitBtn.Position = UDim2.new(0.38, 10, 0, 126)
+SubmitBtn.Size = UDim2.new(0.62, -30, 0, 38)
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(90, 95, 240)
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.Text = "ACTIVATE"
+SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubmitBtn.TextSize = 12
+SubmitBtn.AutoButtonColor = false
+
+local SubmitCorner = Instance.new("UICorner")
+SubmitCorner.CornerRadius = UDim.new(0, 10)
+SubmitCorner.Parent = SubmitBtn
+
+-- Status Text
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Name = "StatusLabel"
+StatusLabel.Parent = MainFrame
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Position = UDim2.new(0, 20, 0, 176)
+StatusLabel.Size = UDim2.new(1, -40, 0, 24)
+StatusLabel.Font = Enum.Font.GothamMedium
+StatusLabel.Text = ""
+StatusLabel.TextColor3 = Color3.fromRGB(255, 90, 90)
+StatusLabel.TextSize = 12
+
+-- Hover Animations
+local function addHoverEffect(button, normalColor, hoverColor)
+	button.MouseEnter:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = hoverColor}):Play()
+	end)
+	button.MouseLeave:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = normalColor}):Play()
+	end)
+end
+
+addHoverEffect(GetKeyBtn, Color3.fromRGB(32, 32, 45), Color3.fromRGB(45, 45, 65))
+addHoverEffect(SubmitBtn, Color3.fromRGB(90, 95, 240), Color3.fromRGB(110, 115, 255))
+
+-- Shake & Flash Red Error Animation
+local isShaking = false
+local function playErrorAnimation()
+	if isShaking then return end
+	isShaking = true
+
+	local basePos = MainFrame.Position
+	local defaultStrokeColor = Color3.fromRGB(100, 110, 245)
+	local defaultStrokeTrans = 0.4
+	local errorRedColor = Color3.fromRGB(255, 60, 60)
+
+	-- Flash red stroke
+	TweenService:Create(MainStroke, TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Color = errorRedColor,
+		Thickness = 2.5,
+		Transparency = 0.1
+	}):Play()
+
+	-- Smooth Shake Sequence
+	local shakeOffsets = { 10, -8, 6, -4, 2, 0 }
+	local tweenInfo = TweenInfo.new(0.06, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+
+	task.spawn(function()
+		for _, offset in ipairs(shakeOffsets) do
+			local targetPos = basePos + UDim2.new(0, offset, 0, 0)
+			local shakeTween = TweenService:Create(MainFrame, tweenInfo, {Position = targetPos})
+			shakeTween:Play()
+			shakeTween.Completed:Wait()
+		end
+
+		MainFrame.Position = basePos
+
+		-- Restore default stroke
+		TweenService:Create(MainStroke, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+			Color = defaultStrokeColor,
+			Thickness = 1.2,
+			Transparency = defaultStrokeTrans
+		}):Play()
+
+		isShaking = false
+	end)
+end
+
+-- Get Key Action
+GetKeyBtn.MouseButton1Click:Connect(function()
+	if setclipboard then
+		setclipboard(KeyURL)
+		StatusLabel.TextColor3 = Color3.fromRGB(120, 220, 160)
+		StatusLabel.Text = "✓ Key link copied to clipboard!"
+	else
+		StatusLabel.TextColor3 = Color3.fromRGB(255, 170, 70)
+		StatusLabel.Text = "⚡ Executor does not support clipboard!"
+	end
+end)
+
+-- Submit Action
+SubmitBtn.MouseButton1Click:Connect(function()
+	if KeyInput.Text == CorrectKey then
+		StatusLabel.TextColor3 = Color3.fromRGB(120, 220, 160)
+		StatusLabel.Text = "✓ Key correct! Saving key for 24h..."
+		
+		-- Lưu Key vào bộ nhớ thiết bị/executor
+		saveKeyData(CorrectKey)
+		
+		-- Fade out UI
+		TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 340, 0, 200)
+		}):Play()
+		TweenService:Create(MainStroke, TweenInfo.new(0.4), {Transparency = 1}):Play()
+		
+		task.wait(0.45)
+		ScreenGui:Destroy()
+		
+		-- Load main script
+		loadMainScript()
+	else
+		StatusLabel.TextColor3 = Color3.fromRGB(255, 80, 90)
+		StatusLabel.Text = "✕ Invalid Key! Please try again."
+		
+		-- Play Shake & Red Flash Effect
+		playErrorAnimation()
+	end
+end)
